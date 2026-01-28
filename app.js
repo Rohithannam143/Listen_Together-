@@ -1,11 +1,6 @@
-let player;
-let playerReady = false;
 let userProfile = null;
 let currentRoom = null;
 let isRemoteAction = true;
-let lastKnownTime = 0; 
-let currentLocalBlobURL = null;
-
 const localPicker = document.getElementById("localPicker");
 const localPlayer = document.getElementById("localPlayer");
 
@@ -44,7 +39,6 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 const db = firebase.database();
-const YT_API_KEY = "AIzaSyDo_eioze-6nhC4mz9Qdm9_bzNotITfXkg";
 
 
 // Google Login (Optional)
@@ -93,92 +87,16 @@ function createRoom() {
 
     currentRoom = roomId;
 
-if (
-  snap.exists() &&
-  snap.child("members").exists() &&
-  snap.child("members").numChildren() > 0
-) {
-  roomStatus.innerText = "❌ Room already active";
-  return;
-}
+    db.ref(`rooms/${roomId}`).set({
+      createdAt: Date.now()
+    });
 
     joinRoomInternal();
     roomStatus.innerText = "✅ Room created & joined";
   });
 }
-function requestJoinRoom(roomId) {
-  const reqRef = db.ref(`rooms/${roomId}/requests/${userProfile.nick}`);
 
-  reqRef.set({
-    name: userProfile.name,
-    nick: userProfile.nick,
-    requestedAt: Date.now()
-  });
-
-  roomStatus.innerText = "⏳ Join request sent";
-}
-
-function listenJoinRequests() {
-  if (!currentRoom) return;
-
-  db.ref(`rooms/${currentRoom}/requests`).on("value", snap => {
-    if (!snap.exists()) return;
-
-    snap.forEach(child => {
-      const req = child.val();
-      showJoinRequestUI(req); // accept / reject buttons
-    });
-  });
-}
-if (userProfile.nick === roomHost) {
-  listenJoinRequests();
-}
-function acceptJoinRequest(nick) {
-  const memberRef = db.ref(`rooms/${currentRoom}/members/${nick}`);
-  const reqRef = db.ref(`rooms/${currentRoom}/requests/${nick}`);
-
-  reqRef.get().then(snap => {
-    if (!snap.exists()) return;
-
-    memberRef.set({
-      ...snap.val(),
-      joinedAt: Date.now()
-    });
-
-    reqRef.remove();
-  });
-}
-function autoAcceptJoin(roomId, nick) {
-  setTimeout(() => {
-    const reqRef = db.ref(`rooms/${roomId}/requests/${nick}`);
-    const memberRef = db.ref(`rooms/${roomId}/members/${nick}`);
-
-    reqRef.get().then(snap => {
-      if (!snap.exists()) return; // already handled
-
-      memberRef.set({
-        ...snap.val(),
-        joinedAt: Date.now(),
-        autoApproved: true
-      });
-
-      reqRef.remove();
-    });
-  }, 10000); // 10 sec
-}
-autoAcceptJoin(roomId, userProfile.nick);
-function waitForApproval(roomId) {
-  db.ref(`rooms/${roomId}/members/${userProfile.nick}`)
-    .on("value", snap => {
-      if (!snap.exists()) return;
-
-      // Approved
-      currentRoom = roomId;
-      joinRoomInternal();
-      roomStatus.innerText = "✅ Joined room";
-    });
-}
-memberRef.onDisconnect().remove();
+const YT_API_KEY = "AIzaSyDo_eioze-6nhC4mz9Qdm9_bzNotITfXkg";
 //Search
 function searchYouTube() {
   const q = document.getElementById("ytQuery").value;
@@ -221,6 +139,8 @@ document.getElementById("player").style.display = "block";
 
 
 // Player
+let player;
+let playerReady = false;
 
 function onYouTubeIframeAPIReady() {
   player = new YT.Player("player", {
@@ -252,17 +172,9 @@ function joinRoom() {
 
   db.ref(`rooms/${roomId}`).get().then(snap => {
     if (!snap.exists()) {
-  roomStatus.innerText = "❌ Room does not exist";
-  return;
-}
-
-if (
-  !snap.child("members").exists() ||
-  snap.child("members").numChildren() === 0
-) {
-  roomStatus.innerText = "⚠️ Room is empty. Try creating it.";
-  return;
-}
+      roomStatus.innerText = "❌ Room does not exist";
+      return;
+    }
 
     currentRoom = roomId;
     joinRoomInternal();
@@ -281,11 +193,6 @@ function joinRoomInternal() {
     nick: userProfile.nick,
     joinedAt: Date.now()
   });
-db.ref(`rooms/${currentRoom}/members`).on("value", snap => {
-  if (!snap.exists() || snap.numChildren() === 0) {
-    db.ref(`rooms/${currentRoom}`).remove();
-  }
-});
 
   memberRef.onDisconnect().remove();
 
@@ -425,46 +332,33 @@ function listenMembers() {
   });
 }
 function pickLocalFile() {
-  if (!userProfile || !currentRoom) {
-    alert("Join a room first");
-    return;
-  }
   localPicker.click();
 }
 
 localPicker.onchange = () => {
   const file = localPicker.files[0];
-  if (!file) return;
+  if (!file || !currentRoom) return;
 
-  // 🔥 Revoke old blob URL to avoid errors
-  if (currentLocalBlobURL) {
-    URL.revokeObjectURL(currentLocalBlobURL);
-  }
-
-  const blobURL = URL.createObjectURL(file);
-  currentLocalBlobURL = blobURL;
+  const url = URL.createObjectURL(file);
 
   currentSource = "local";
-  showLocalPlayer();
-  localPlayer.pause();
-  localPlayer.src = blobURL;
-  localPlayer.load();
 
-  alert("Press ▶️ to start local media");
+  // Hide YouTube, show local
+  document.getElementById("player").style.display = "none";
+  localPlayer.style.display = "block";
+
+  localPlayer.src = url;
+  localPlayer.currentTime = 0;
+  localPlayer.play();
 
   db.ref(`rooms/${currentRoom}/state`).set({
     source: "local",
     localName: file.name,
-    action: "pause",
+    action: "play",
     time: 0,
     updatedAt: Date.now()
   });
 };
-localPlayer.onerror = () => {
-  console.error("Local media error:", localPlayer.error);
-};
-
-
 localPlayer.onplay = () => {
   if (isRemoteAction) return;
   updateRoomState("play", localPlayer.currentTime);
