@@ -1,0 +1,453 @@
+/* =====================
+   GLOBAL RESET
+===================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: white;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* =====================
+   LANDING PAGE
+===================== */
+#landing {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #020617, #020617);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+#landing.hidden {
+  z-index: -1;
+}
+.logo {
+  font-size: 44px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.hero {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 22px;
+}
+
+.auth-box {
+  background: #020617;
+  padding: 26px;
+  width: 320px;
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-box input,
+.auth-box button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+.auth-box input {
+  background: #0f172a;
+  color: white;
+}
+
+.auth-box button {
+  background: #38bdf8;
+  color: #020617;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-box button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* =====================
+   MAIN APP GRID
+===================== */
+#app {
+  display: grid;
+  grid-template-columns: 240px 1fr 300px;
+  height: 100vh;
+  gap: 14px;
+  padding: 14px;
+}
+
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
+/* =====================
+   PANELS
+===================== */
+.panel {
+  background: linear-gradient(180deg, #020617, #020617);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+/* =====================
+   ROOMS PANEL (LEFT)
+===================== */
+.left h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.left input {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background: #0f172a;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.left button {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background: #0f172a;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+#roomStatus {
+  font-size: 13px;
+  margin-top: 6px;
+  opacity: 0.8;
+}
+
+#memberList {
+  list-style: none;
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+#memberList li {
+  margin-bottom: 4px;
+}
+
+/* =====================
+   CENTER PLAYER
+===================== */
+.center {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;       /* 🔥 important */
+}
+
+
+/* Search bar */
+.yt-search {
+  display: flex;
+  gap: 8px;
+}
+
+.yt-search input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #0f172a;
+  color: white;
+}
+
+.yt-search button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #38bdf8;
+  color: #020617;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Player */
+#player {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;          /* 🔥 key fix */
+  aspect-ratio: 16 / 9;      /* responsive */
+  background: black;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 0 auto;            /* center it */
+}
+
+#player iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25%;
+  height: 100%;
+  border: none;
+}
+
+
+/* Search results */
+#results {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.yt-card {
+  min-width: 160px;
+  background: #0f172a;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.yt-card:hover {
+  transform: scale(1.05);
+}
+
+.yt-card img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.yt-card p {
+  font-size: 12px;
+  padding: 6px;
+  opacity: 0.85;
+}
+
+/* =====================
+   CHAT PANEL (RIGHT)
+===================== */
+.right h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+#chatBox {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: #0f172a;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* Chat bubbles */
+.msg {
+  max-width: 75%;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  animation: fadeUp 0.2s ease;
+}
+
+.msg-user {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+.msg-text {
+  font-size: 14px;
+}
+
+.msg-time {
+  font-size: 10px;
+  text-align: right;
+  opacity: 0.5;
+  margin-top: 2px;
+}
+
+/* Sender vs others (JS can toggle .me) */
+.msg.me {
+  margin-left: auto;
+  background: #38bdf8;
+  color: #020617;
+}
+
+.msg:not(.me) {
+  background: #020617;
+}
+
+/* Chat input */
+.right input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #020617;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.right button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #38bdf8;
+  color: #020617;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =====================
+   SCROLLBARS
+===================== */
+#chatBox::-webkit-scrollbar,
+#results::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+#chatBox::-webkit-scrollbar-thumb,
+#results::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 6px;
+}
+
+
+/* =====================
+   ANIMATIONS
+===================== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =====================
+   MOBILE SUPPORT
+===================== */
+@media (max-width: 900px) {
+
+  body {
+    overflow: hidden;
+  }
+
+  /* App becomes vertical */
+  #app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  /* Hide side panels by default */
+  .left,
+  .right {
+    display: none;
+  }
+
+  /* Center becomes main view */
+  .center {
+    align-items: stretch;
+  }
+
+  /* Player bigger on mobile */
+  #player {
+    max-width: 100%;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+  }
+
+  /* Search results: swipeable */
+  #results {
+    gap: 8px;
+  }
+
+  .yt-card {
+    min-width: 120px;
+  }
+
+  /* Chat full screen when open */
+  .mobile-chat {
+    display: flex !important;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: #020617;
+    padding: 10px;
+  }
+
+  /* Rooms full screen when open */
+  .mobile-rooms {
+    display: flex !important;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: #020617;
+    padding: 10px;
+  }
+
+  /* Bottom navigation */
+  .mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 56px;
+    background: #020617;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .mobile-nav button {
+    flex: 1;
+    height: 100%;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .mobile-nav button.active {
+    color: #38bdf8;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 900px) {
+  input, button {
+    font-size: 16px; /* prevent iOS zoom */
+  }
+
+  button {
+    min-height: 44px; /* touch-friendly */
+  }
+}
+

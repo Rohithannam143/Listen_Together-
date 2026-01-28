@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SyncVibe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LANDING PAGE -->
+<div id="landing">
+  <h1 class="logo">🎧 SyncVibe</h1>
+
+  <div class="hero">
+    <p>Listen Together. Feel Together.</p>
+  </div>
+
+  <div class="auth-box">
+    <input id="name" placeholder="Your Name *" />
+    <input id="nickname" placeholder="Nickname *" />
+
+    <button id="googleLogin">Login with Google (Optional)</button>
+    <button id="enterBtn">Enter</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+
+  <!-- LEFT: ROOMS -->
+  <div class="panel left">
+    <h3>Rooms</h3>
+
+    <input id="roomId" placeholder="Room ID" />
+    <button onclick="createRoom()">Create</button>
+    <button onclick="joinRoom()">Join</button>
+
+    <p id="roomStatus"></p>
+
+     <!-- MEMBERS LIST --> 
+  <div id="members">
+  <h4>Active Members</h4>
+  <ul id="memberList"></ul>
+</div>
+
+  </div>
+
+<!-- CENTER: PLAYER -->
+<div class="panel center">
+  <div class="yt-search">
+    <input id="ytQuery" placeholder="Search YouTube music..." />
+    <button onclick="searchYouTube()">Search</button>
+    <button onclick="pickLocalFile()">Play Local File</button>
+
+  </div>
+
+  <div id="results"></div>
+
+  <div id="player"></div>
+
+</div>
+<input
+  type="file"
+  id="localPicker"
+  accept="audio/*,video/*"
+  hidden
+/>
+
+<video
+  id="localPlayer"
+  controls
+  style="display:none; width: 100% ; border-radius:16px; background:black;"
+></video>
+
+
+
+
+  <!-- RIGHT: CHAT -->
+  <div class="panel right">
+    <h3>Chat</h3>
+
+    <div id="chatBox"></div>
+
+    <input id="chatInput" placeholder="Type message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="app.js"></script>
+<div class="mobile-nav">
+  <button onclick="openRooms()">Rooms</button>
+  <button class="active">Player</button>
+  <button onclick="openChat()">Chat</button>
+</div>
+
+</body>
+</html>
